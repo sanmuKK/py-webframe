@@ -44,6 +44,9 @@ class Application():
         run_simple(host, port, self, use_reloader=use_reloader)
         return
 
+    def url_for(self,a):#返回对应endpoint的url
+        return self.urls.build(a)
+
     @Request.application
     def application(self, request):
         self.urls = self.bind_to_environ(request.environ)
@@ -53,12 +56,12 @@ class Application():
             endpoint, args = self.urls.match()#匹配请求参数
         except HTTPException as e:#如果找不到url则返回404
             return e
-        return Response(self.route.endpoint_dict[endpoint](request), mimetype='text/html')#响应请求，类型应为'text/html'
+        return Response(self.route.endpoint_dict[endpoint](request), mimetype='text/html')#响应请求，类型为'text/html'
 
     def bind_to_environ(self, env):#用以绑定环境
         return self.route.url_map.bind_to_environ(env)
 
-    def getdata(self, arg, *instead):#获取数据，如果没有对应数据则返回instead的值，类似request.get('ex1','ex2')
+    def getdata(self, arg, *instead):#获取数据，如果没有对应数据则返回instead的值，类似flask的request.get('ex1','ex2')
         values = self.urls.match()[1]
         try:
             return values[arg]
